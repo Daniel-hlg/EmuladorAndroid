@@ -110,6 +110,34 @@ fun PantallaInicio(nombre: String = "Daniel") {
                     Además, Scrum se apoya en ceremonias que marcan el ritmo del trabajo. El Sprint Planning es la reunión donde se decide qué se hará en el sprint y cómo se logrará. El Daily Scrum es una reunión corta de quince minutos que se hace cada día para que el equipo se sincronice y vea cómo va el trabajo. El Sprint Review ocurre al final del sprint, cuando se muestra lo que se construyó y se recibe retroalimentación del cliente. El Sprint Retrospective también se hace al final, pero es una reunión interna del equipo para reflexionar sobre cómo trabajaron y qué pueden mejorar en el próximo sprint. Finalmente, el Sprint en sí es el ciclo de trabajo que dura entre una y cuatro semanas y que contiene todas estas ceremonias.
 
                     En palabras simples, Scrum es como un juego en equipo: cada persona tiene un rol claro, se usan listas para organizar lo que falta y lo que se está haciendo, y hay reuniones cortas para planear, revisar y mejorar constantemente.
+                    
+                    📌 Qué son las pruebas
+                    Las pruebas de software son una actividad dentro del desarrollo que busca comprobar que el sistema cumple con los requisitos definidos y que responde correctamente en diferentes situaciones. No se trata solo de “probar a ver qué pasa”, sino de un proceso estructurado: se define qué se va a probar, qué resultado se espera, bajo qué condiciones se ejecuta y cómo se interpretan los resultados. En metodologías modernas como Agile y DevOps, las pruebas se realizan desde etapas tempranas para prevenir errores y no solo al final del proyecto. 
+
+                    🧩 Tipos principales de pruebas
+                    Pruebas unitarias  
+                    Se enfocan en la parte más pequeña del código, como una función o método, para comprobar que funciona de manera aislada. Son rápidas y fáciles de automatizar.
+
+                    Pruebas de integración  
+                    Verifican que diferentes módulos o servicios del sistema trabajen correctamente juntos.
+
+                    Pruebas funcionales  
+                    Validan que el sistema cumpla con lo que se prometió en los requisitos, desde la perspectiva del usuario.
+
+                    Pruebas de extremo a extremo (E2E)  
+                    Simulan el recorrido completo de un usuario, desde la interfaz hasta la base de datos, para comprobar que todo el flujo funciona.
+
+                    Pruebas de rendimiento  
+                    Evalúan cómo responde el sistema bajo carga: cuántos usuarios soporta, cuánto tarda en responder y cuándo empieza a fallar.
+
+                    Pruebas de aceptación  
+                    Son las que validan si el producto final cumple con lo que el cliente necesita y decide si se aprueba o no.
+
+                    Pruebas de seguridad  
+                    Buscan vulnerabilidades como inyecciones SQL, accesos no autorizados o fallos en la protección de datos.
+
+                    🎯 Idea clave
+                    En resumen, las pruebas son como “poner a prueba” al software en diferentes escenarios para asegurarse de que hace lo que debe, que no se rompe y que es seguro. Cada tipo de prueba tiene un propósito: unas miran lo más pequeño, otras cómo se conectan las piezas, otras cómo lo ve el usuario y otras cómo se comporta bajo presión.
             """.trimIndent()
         )
     }
