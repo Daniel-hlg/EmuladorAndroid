@@ -150,3 +150,5 @@ fun PantallaInicioPreview() {
         PantallaInicio("Aprendiz")
     }
 }
+
+
