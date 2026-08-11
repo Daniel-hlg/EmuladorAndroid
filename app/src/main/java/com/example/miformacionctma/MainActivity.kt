@@ -18,14 +18,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MiFormacionCTMATheme {
-                PantallaInicio(nombre = "Daniel")
+                PantallaInicio(nombre = "Daniel H.")
             }
         }
     }
 }
 
 @Composable
-fun PantallaInicio(nombre: String = "Daniel") {
+fun PantallaInicio(nombre: String = "Daniel H.") {
     // Estado de scroll
     val scrollState = rememberScrollState()
 
