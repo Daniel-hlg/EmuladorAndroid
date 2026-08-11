@@ -149,4 +149,6 @@ fun PantallaInicioPreview() {
     MiFormacionCTMATheme {
         PantallaInicio("Aprendiz")
     }
+
+
 }
