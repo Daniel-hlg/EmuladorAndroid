@@ -74,6 +74,13 @@ fun PantallaActividades(
                             text = "Consulta tus actividades, fechas, estados y progreso.",
                             modifier = Modifier.padding(top = 8.dp)
                         )
+
+                        // Mostramos el progreso general
+                        Text(
+                            text = "Progreso general: ${calcularProgresoTotal(actividades)}%",
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(top = 12.dp)
+                        )
                     }
                 }
 
@@ -240,4 +247,18 @@ fun EstadoVacioPreview() {
             modifier = Modifier.fillMaxSize()
         )
     }
+}
+
+// FUNCIÓN EXTRA
+fun calcularProgresoTotal(actividades: List<ActividadFormativa>): Int {
+
+    if (actividades.isEmpty()) {
+        return 0
+    }
+
+    val sumaProgreso = actividades.sumOf { actividad ->
+        actividad.progreso
+    }
+
+    return sumaProgreso / actividades.size
 }
