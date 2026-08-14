@@ -1,152 +1,439 @@
 package com.example.miformacionctma
+import com.example.miformacionctma.uii.screens.PantallaActividades
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.example.miformacionctma.ui.theme.MiFormacionCTMATheme
 
+
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             MiFormacionCTMATheme {
-                PantallaInicio(nombre = "Daniel")
+                PantallaActividades()
             }
         }
     }
 }
 
+
+// Modelo de una actividad formativa
+data class ActividadFormativa(
+    val id: Int,
+    val titulo: String,
+    val fecha: String,
+    val estado: String,
+    val progreso: Int
+)
+
+
+// Las 10 actividades solicitadas
+val actividades = listOf(
+
+    ActividadFormativa(
+        1,
+        "Manifiesto Ágil",
+        "11 de agosto",
+        "Completada",
+        100
+    ),
+
+    ActividadFormativa(
+        2,
+        "Valores del Manifiesto Ágil",
+        "12 de agosto",
+        "Completada",
+        100
+    ),
+
+    ActividadFormativa(
+        3,
+        "Principios Ágiles",
+        "13 de agosto",
+        "Completada",
+        100
+    ),
+
+    ActividadFormativa(
+        4,
+        "Introducción a Scrum",
+        "14 de agosto",
+        "En proceso",
+        75
+    ),
+
+    ActividadFormativa(
+        5,
+        "Roles de Scrum",
+        "15 de agosto",
+        "En proceso",
+        60
+    ),
+
+    ActividadFormativa(
+        6,
+        "Artefactos de Scrum",
+        "16 de agosto",
+        "En proceso",
+        50
+    ),
+
+    ActividadFormativa(
+        7,
+        "Pruebas de software",
+        "17 de agosto",
+        "Pendiente",
+        0
+    ),
+
+    ActividadFormativa(
+        8,
+        "Tipos de pruebas",
+        "18 de agosto",
+        "Pendiente",
+        0
+    ),
+
+    ActividadFormativa(
+        9,
+        "Jetpack Compose",
+        "19 de agosto",
+        "Pendiente",
+        0
+    ),
+
+    ActividadFormativa(
+        10,
+        "Proyecto Mi Formación CTMA",
+        "20 de agosto",
+        "Pendiente",
+        0
+    )
+)
+
+
+// Pantalla principal
 @Composable
-fun PantallaInicio(nombre: String = "Daniel") {
-    // Estado de scroll
-    val scrollState = rememberScrollState()
+fun PantallaFormacion(
+    lista: List<ActividadFormativa> = actividades
+) {
+
+    Surface(
+        modifier = Modifier.fillMaxSize()
+    ) {
+
+        if (lista.isEmpty()) {
+
+            MensajeSinActividades()
+
+        } else {
+
+            BoxWithConstraints(
+                modifier = Modifier.fillMaxSize()
+            ) {
+
+                val anchoGrande = maxWidth >= 600.dp
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(20.dp)
+                ) {
+
+                    Encabezado(
+                        cantidad = lista.size
+                    )
+
+                    Spacer(
+                        modifier = Modifier.height(16.dp)
+                    )
+
+                    if (anchoGrande) {
+
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(2),
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+
+                            items(
+                                items = lista,
+                                key = { actividad -> actividad.id }
+                            ) { actividad ->
+
+                                Tarjeta(
+                                    actividad = actividad
+                                )
+                            }
+                        }
+
+                    } else {
+
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+
+                            items(
+                                items = lista,
+                                key = { actividad -> actividad.id }
+                            ) { actividad ->
+
+                                Tarjeta(
+                                    actividad = actividad
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+// Encabezado de la aplicación
+@Composable
+fun Encabezado(
+    cantidad: Int
+) {
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(scrollState) // habilita desplazamiento vertical
-            .padding(24.dp)
+        modifier = Modifier.fillMaxWidth()
     ) {
+
         Text(
             text = "Mi Formación CTMA",
             style = MaterialTheme.typography.headlineMedium
         )
-        Spacer(modifier = Modifier.height(12.dp))
-        Text(text = "Hola, $nombre")
-        Spacer(modifier = Modifier.height(12.dp))
-        Text(text = "Aquí organizarás actividades y evidencias.\n")
+
+        Spacer(
+            modifier = Modifier.height(5.dp)
+        )
 
         Text(
-            text = """
-                    El Manifiesto Ágil: es un acuerdo que hicieron unos programadores para trabajar mejor en equipo. 
-                    Básicamente dice: “lo importante no es seguir reglas rígidas, sino trabajar juntos, adaptarnos rápido y entregar cosas útiles a las personas”.
+            text = "Seguimiento de actividades formativas",
+            style = MaterialTheme.typography.bodyLarge
+        )
 
-                    🧩 Los 4 valores
-                    Personas y conversaciones  
-                    Es mejor hablar con la gente y entendernos, que solo escribir papeles largos. 
-                    Como cuando prefieres hablar con tu amigo en vez de mandarle una carta gigante.
+        Spacer(
+            modifier = Modifier.height(10.dp)
+        )
 
-                    Software funcionando  
-                    Es más valioso mostrar algo que ya sirve, aunque sea pequeño, que tener solo planes bonitos en papel. 
-                    Como cuando haces un dibujo y lo enseñas, aunque no esté perfecto.
-
-                    Colaboración con el cliente  
-                    Es mejor trabajar junto con la persona que necesita lo que haces, que pelear por contratos o reglas. 
-                    Como cuando tu mamá te dice cómo quiere el cuarto ordenado y tú lo haces con ella.
-
-                    Responder al cambio  
-                    Es mejor adaptarse si algo cambia, que seguir un plan viejo que ya no sirve. 
-                    Como cuando ibas a jugar fútbol, pero llueve, entonces juegas escondidas.
-
-                    🎈 Los 12 principios explicados como niño
-                    Satisfacer al cliente  
-                    Lo importante es hacer feliz a la persona que usa lo que hacemos.
-
-                    Aceptar cambios  
-                    Si alguien pide algo nuevo, no enojarse, sino intentar hacerlo.
-
-                    Entregar seguido  
-                    Mejor dar cosas pequeñas rápido, que esperar mucho tiempo.
-
-                    Trabajar juntos  
-                    Que los que hacen el trabajo y los que lo piden estén siempre hablando.
-
-                    Motivar a las personas  
-                    Si la gente está feliz y con confianza, trabaja mejor.
-
-                    Conversaciones cara a cara  
-                    Hablar directamente es más claro que mandar mensajes largos.
-
-                    Software funcionando  
-                    Lo que vale es que las cosas sirvan, no que estén solo planeadas.
-
-                    Ritmo constante  
-                    Es mejor trabajar a un paso tranquilo y constante, no correr y cansarse.
-
-                    Atención a la calidad  
-                    Hacer las cosas bien desde el inicio, no a la carrera.
-
-                    Simplicidad  
-                    Lo más fácil y simple suele ser lo mejor.
-
-                    Equipos autoorganizados  
-                    Dejar que el grupo decida cómo trabajar, porque juntos saben más.
-
-                    Reflexionar y mejorar  
-                    Cada cierto tiempo mirar lo que hicimos y pensar cómo hacerlo mejor.
-                    
-                    Scrum es un marco de trabajo ágil que sirve para organizar proyectos en ciclos cortos llamados sprints. La idea es que el equipo pueda entregar resultados útiles rápidamente y adaptarse a los cambios sin depender de planes rígidos. Dentro de Scrum existen tres roles principales. El Product Owner es la persona que se encarga de decidir qué se debe construir primero y de priorizar las necesidades del producto, siempre pensando en dar el mayor valor posible. El Scrum Master es quien ayuda al equipo a aplicar Scrum correctamente, elimina obstáculos y se asegura de que todos trabajen de manera fluida, pero no es un jefe, sino más bien un guía. El Equipo de Desarrollo es el grupo de personas que realmente construye el producto, trabajando de forma autoorganizada y multifuncional.
-
-                    Scrum también tiene artefactos que ayudan a dar transparencia y orden. El Product Backlog es como una lista de todo lo que se quiere lograr en el producto, organizada por prioridades. El Sprint Backlog es la parte de esa lista que el equipo decide trabajar en un sprint específico. El Incremento es el resultado del sprint, es decir, la parte del producto que ya funciona y que se puede mostrar al cliente.
-
-                    Además, Scrum se apoya en ceremonias que marcan el ritmo del trabajo. El Sprint Planning es la reunión donde se decide qué se hará en el sprint y cómo se logrará. El Daily Scrum es una reunión corta de quince minutos que se hace cada día para que el equipo se sincronice y vea cómo va el trabajo. El Sprint Review ocurre al final del sprint, cuando se muestra lo que se construyó y se recibe retroalimentación del cliente. El Sprint Retrospective también se hace al final, pero es una reunión interna del equipo para reflexionar sobre cómo trabajaron y qué pueden mejorar en el próximo sprint. Finalmente, el Sprint en sí es el ciclo de trabajo que dura entre una y cuatro semanas y que contiene todas estas ceremonias.
-
-                    En palabras simples, Scrum es como un juego en equipo: cada persona tiene un rol claro, se usan listas para organizar lo que falta y lo que se está haciendo, y hay reuniones cortas para planear, revisar y mejorar constantemente.
-                    
-                    📌 Qué son las pruebas
-                    Las pruebas de software son una actividad dentro del desarrollo que busca comprobar que el sistema cumple con los requisitos definidos y que responde correctamente en diferentes situaciones. No se trata solo de “probar a ver qué pasa”, sino de un proceso estructurado: se define qué se va a probar, qué resultado se espera, bajo qué condiciones se ejecuta y cómo se interpretan los resultados. En metodologías modernas como Agile y DevOps, las pruebas se realizan desde etapas tempranas para prevenir errores y no solo al final del proyecto. 
-
-                    🧩 Tipos principales de pruebas
-                    Pruebas unitarias  
-                    Se enfocan en la parte más pequeña del código, como una función o método, para comprobar que funciona de manera aislada. Son rápidas y fáciles de automatizar.
-
-                    Pruebas de integración  
-                    Verifican que diferentes módulos o servicios del sistema trabajen correctamente juntos.
-
-                    Pruebas funcionales  
-                    Validan que el sistema cumpla con lo que se prometió en los requisitos, desde la perspectiva del usuario.
-
-                    Pruebas de extremo a extremo (E2E)  
-                    Simulan el recorrido completo de un usuario, desde la interfaz hasta la base de datos, para comprobar que todo el flujo funciona.
-
-                    Pruebas de rendimiento  
-                    Evalúan cómo responde el sistema bajo carga: cuántos usuarios soporta, cuánto tarda en responder y cuándo empieza a fallar.
-
-                    Pruebas de aceptación  
-                    Son las que validan si el producto final cumple con lo que el cliente necesita y decide si se aprueba o no.
-
-                    Pruebas de seguridad  
-                    Buscan vulnerabilidades como inyecciones SQL, accesos no autorizados o fallos en la protección de datos.
-
-                    🎯 Idea clave
-                    En resumen, las pruebas son como “poner a prueba” al software en diferentes escenarios para asegurarse de que hace lo que debe, que no se rompe y que es seguro. Cada tipo de prueba tiene un propósito: unas miran lo más pequeño, otras cómo se conectan las piezas, otras cómo lo ve el usuario y otras cómo se comporta bajo presión.
-            """.trimIndent()
+        Text(
+            text = "$cantidad actividades registradas",
+            style = MaterialTheme.typography.labelLarge
         )
     }
 }
 
-@Preview(showBackground = true)
+
+// Tarjeta individual
 @Composable
-fun PantallaInicioPreview() {
+fun Tarjeta(
+    actividad: ActividadFormativa
+) {
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .semantics {
+
+                contentDescription =
+                    "${actividad.titulo}, " +
+                            "fecha ${actividad.fecha}, " +
+                            "estado ${actividad.estado}, " +
+                            "progreso ${actividad.progreso} por ciento"
+            }
+    ) {
+
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+
+            Text(
+                text = actividad.titulo,
+                style = MaterialTheme.typography.titleMedium
+            )
+
+            Spacer(
+                modifier = Modifier.height(10.dp)
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+
+                Text(
+                    text = "Fecha"
+                )
+
+                Text(
+                    text = actividad.fecha
+                )
+            }
+
+            Spacer(
+                modifier = Modifier.height(6.dp)
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+
+                Text(
+                    text = "Estado"
+                )
+
+                Text(
+                    text = actividad.estado
+                )
+            }
+
+            Spacer(
+                modifier = Modifier.height(10.dp)
+            )
+
+            Text(
+                text = "Progreso: ${actividad.progreso}%"
+            )
+
+            Spacer(
+                modifier = Modifier.height(5.dp)
+            )
+
+            LinearProgressIndicator(
+                progress = actividad.progreso / 100f,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+}
+
+
+// Estado vacío
+@Composable
+fun MensajeSinActividades() {
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(24.dp)
+        ) {
+
+            Text(
+                text = "No hay actividades",
+                style = MaterialTheme.typography.headlineSmall
+            )
+
+            Spacer(
+                modifier = Modifier.height(8.dp)
+            )
+
+            Text(
+                text = "Todavía no tienes actividades registradas."
+            )
+
+            Spacer(
+                modifier = Modifier.height(16.dp)
+            )
+
+            Button(
+                onClick = { }
+            ) {
+
+                Text(
+                    text = "Actualizar"
+                )
+            }
+        }
+    }
+}
+
+
+// Preview de la pantalla
+@Preview(
+    showBackground = true
+)
+@Composable
+fun VistaFormacion() {
+
     MiFormacionCTMATheme {
-        PantallaInicio("Aprendiz")
+        PantallaFormacion()
+    }
+}
+
+
+// Preview para comprobar textos largos
+@Preview(
+    showBackground = true
+)
+@Composable
+fun VistaTextoLargo() {
+
+    MiFormacionCTMATheme {
+
+        Tarjeta(
+            actividad = ActividadFormativa(
+                id = 20,
+                titulo = "Actividad con un título muy largo para comprobar que la interfaz se adapte correctamente",
+                fecha = "25 de agosto",
+                estado = "En proceso",
+                progreso = 50
+            )
+        )
+    }
+}
+
+
+// Preview del estado vacío
+@Preview(
+    showBackground = true
+)
+@Composable
+fun VistaVacia() {
+
+    MiFormacionCTMATheme {
+
+        MensajeSinActividades()
     }
 }
