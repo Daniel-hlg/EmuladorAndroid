@@ -1,0 +1,18 @@
+Documentación de Pruebas
+
+1. Prueba de Login:
+   - Objetivo: Verificar que un usuario puede iniciar sesión con credenciales válidas.
+   - Pasos:
+     1. Abrir la aplicación.
+     2. Ingresar un correo electrónico válido.
+     3. Ingresar la contraseña correcta.
+     4. Presionar el botón "Iniciar Sesión".
+   - Resultado Esperado: El usuario es redirigido a la pantalla principal de la aplicación.
+
+2. Prueba de Visualización de Actividades:
+   - Objetivo: Verificar que las tarjetas de actividades se cargan y muestran correctamente.
+   - Pasos:
+     1. Iniciar sesión en la aplicación.
+     2. Navegar a la sección de actividades.
+     3. Observar la lista de actividades disponibles.
+   - Resultado Esperado: Se muestran las tarjetas de actividades con su título, descripción y estado correspondiente.
