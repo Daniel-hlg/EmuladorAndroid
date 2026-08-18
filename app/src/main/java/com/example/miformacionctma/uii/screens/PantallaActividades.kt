@@ -1,5 +1,7 @@
 @file:OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 package com.example.miformacionctma.uii.screens
+import androidx.compose.foundation.layout.BoxWithConstraints
+
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,6 +11,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -30,85 +35,43 @@ fun PantallaActividades(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {
-                    Text("Mi Formación CTMA")
-                }
+                title = { Text("Mi Formación CTMA") }
             )
         }
     ) { paddingValues ->
-
         if (actividades.isEmpty()) {
-
             EstadoVacio(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
             )
-
         } else {
-
-            LazyColumn(
+            ContenidoAdaptable(
+                actividades = actividades,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
-                    .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-
-                item {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 16.dp)
-                    ) {
-                        Text(
-                            text = "Actividades formativas",
-                            style = MaterialTheme.typography.headlineSmall
-                        )
-
-                        Text(
-                            text = "Consulta tus actividades, fechas, estados y progreso.",
-                            modifier = Modifier.padding(top = 8.dp)
-                        )
-                    }
-                }
-
-                items(
-                    items = actividades,
-                    key = { actividad -> actividad.id }
-                ) { actividad ->
-
-                    TarjetaActividad(
-                        actividad = actividad
-                    )
-                }
-            }
+                    .padding(horizontal = 16.dp)
+            )
         }
     }
 }
 
 @Composable
-fun EstadoVacio(
-    modifier: Modifier = Modifier
-) {
+fun EstadoVacio(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = "No hay actividades",
                 style = MaterialTheme.typography.headlineSmall
             )
-
             Text(
                 text = "Todavía no tienes actividades registradas.",
                 modifier = Modifier.padding(top = 8.dp)
             )
-
             Button(
                 onClick = {},
                 modifier = Modifier.padding(top = 16.dp)
@@ -119,103 +82,61 @@ fun EstadoVacio(
     }
 }
 
+@Composable
+fun ContenidoAdaptable(
+    actividades: List<ActividadFormativa>,
+    modifier: Modifier = Modifier
+) {
+    BoxWithConstraints(modifier = modifier) {
+        if (maxWidth < 600.dp) {
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                item {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp)
+                    ) {
+                        Text(
+                            text = "Actividades formativas",
+                            style = MaterialTheme.typography.headlineSmall
+                        )
+                        Text(
+                            text = "Consulta tus actividades, fechas, estados y progreso.",
+                            modifier = Modifier.padding(top = 8.dp)
+                        )
+                    }
+                }
+                items(actividades, key = { it.id }) { actividad ->
+                    TarjetaActividad(actividad = actividad)
+                }
+            }
+        } else {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(actividades, key = { it.id }) { actividad ->
+                    TarjetaActividad(actividad = actividad)
+                }
+            }
+        }
+    }
+}
+
 val actividadesEjemplo = listOf(
-
-    ActividadFormativa(
-        id = 1,
-        titulo = "Introducción al desarrollo móvil",
-        descripcion = "Conceptos básicos del desarrollo de aplicaciones móviles Android.",
-        fecha = "11 de agosto",
-        estado = "Completada",
-        progreso = 100
-    ),
-
-    ActividadFormativa(
-        id = 2,
-        titulo = "Programación en Kotlin",
-        descripcion = "Variables, funciones, colecciones y clases en Kotlin.",
-        fecha = "12 de agosto",
-        estado = "Completada",
-        progreso = 100
-    ),
-
-    ActividadFormativa(
-        id = 3,
-        titulo = "Manifiesto Ágil",
-        descripcion = "Estudio de los cuatro valores y doce principios del Manifiesto Ágil.",
-        fecha = "13 de agosto",
-        estado = "Completada",
-        progreso = 100
-    ),
-
-    ActividadFormativa(
-        id = 4,
-        titulo = "Introducción a Scrum",
-        descripcion = "Roles, eventos y artefactos principales de Scrum.",
-        fecha = "14 de agosto",
-        estado = "En proceso",
-        progreso = 70
-    ),
-
-    ActividadFormativa(
-        id = 5,
-        titulo = "Pruebas de software",
-        descripcion = "Identificación de los principales tipos de pruebas de software.",
-        fecha = "15 de agosto",
-        estado = "En proceso",
-        progreso = 60
-    ),
-
-    ActividadFormativa(
-        id = 6,
-        titulo = "Jetpack Compose",
-        descripcion = "Construcción de interfaces utilizando Jetpack Compose.",
-        fecha = "16 de agosto",
-        estado = "En proceso",
-        progreso = 50
-    ),
-
-    ActividadFormativa(
-        id = 7,
-        titulo = "Material 3",
-        descripcion = "Uso de componentes, colores y tipografía de Material 3.",
-        fecha = "17 de agosto",
-        estado = "Pendiente",
-        progreso = 0
-    ),
-
-    ActividadFormativa(
-        id = 8,
-        titulo = "Accesibilidad",
-        descripcion = "Revisión de contraste, tamaño de texto y zonas táctiles.",
-        fecha = "18 de agosto",
-        estado = "Pendiente",
-        progreso = 0
-    ),
-
-    ActividadFormativa(
-        id = 9,
-        titulo = "Diseño adaptable",
-        descripcion = "Adaptación de la interfaz para diferentes tamaños de pantalla.",
-        fecha = "19 de agosto",
-        estado = "Pendiente",
-        progreso = 0
-    ),
-
-    ActividadFormativa(
-        id = 10,
-        titulo = "Proyecto Mi Formación CTMA",
-        descripcion = "Integración de las actividades y evidencias del proceso formativo.",
-        fecha = "20 de agosto",
-        estado = "Pendiente",
-        progreso = 0
-    )
+    ActividadFormativa(1, "Introducción al desarrollo móvil", "Conceptos básicos del desarrollo de aplicaciones móviles Android.", "11 de agosto", "Completada", 100),
+    ActividadFormativa(2, "Programación en Kotlin", "Variables, funciones, colecciones y clases en Kotlin.", "12 de agosto", "Completada", 100),
+    ActividadFormativa(3, "Manifiesto Ágil", "Estudio de los cuatro valores y doce principios del Manifiesto Ágil.", "13 de agosto", "Completada", 100),
+    ActividadFormativa(4, "Introducción a Scrum", "Roles, eventos y artefactos principales de Scrum.", "14 de agosto", "En proceso", 70),
+    ActividadFormativa(5, "Pruebas de software", "Identificación de los principales tipos de pruebas de software.", "15 de agosto", "En proceso", 60),
+    ActividadFormativa(6, "Jetpack Compose", "Construcción de interfaces utilizando Jetpack Compose.", "16 de agosto", "En proceso", 50),
+    ActividadFormativa(7, "Material 3", "Uso de componentes, colores y tipografía de Material 3.", "17 de agosto", "Pendiente", 0),
+    ActividadFormativa(8, "Accesibilidad", "Revisión de contraste, tamaño de texto y zonas táctiles.", "18 de agosto", "Pendiente", 0),
+    ActividadFormativa(9, "Diseño adaptable", "Adaptación de la interfaz para diferentes tamaños de pantalla.", "19 de agosto", "Pendiente", 0),
+    ActividadFormativa(10, "Proyecto Mi Formación CTMA", "Integración de las actividades y evidencias del proceso formativo.", "20 de agosto", "Pendiente", 0)
 )
 
-@Preview(
-    showBackground = true,
-    showSystemUi = true
-)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PantallaActividadesPreview() {
     MiFormacionCTMATheme {
@@ -227,8 +148,22 @@ fun PantallaActividadesPreview() {
 @Composable
 fun EstadoVacioPreview() {
     MiFormacionCTMATheme {
-        EstadoVacio(
-            modifier = Modifier.fillMaxSize()
-        )
+        EstadoVacio(modifier = Modifier.fillMaxSize())
+    }
+}
+
+@Preview(showBackground = true, fontScale = 1.5f)
+@Composable
+fun PantallaActividadesFuenteGrandePreview() {
+    MiFormacionCTMATheme {
+        PantallaActividades()
+    }
+}
+
+@Preview(showBackground = true, widthDp = 700)
+@Composable
+fun PantallaActividadesAnchoAmpliadoPreview() {
+    MiFormacionCTMATheme {
+        ContenidoAdaptable(actividadesEjemplo)
     }
 }
