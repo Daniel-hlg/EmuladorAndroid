@@ -1,4 +1,5 @@
 @file:OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+
 package com.example.miformacionctma.uii.screens
 
 import androidx.compose.foundation.layout.Arrangement
@@ -15,18 +16,27 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.miformacionctma.model.ActividadFormativa
-import com.example.miformacionctma.uii.components.TarjetaActividad
 import com.example.miformacionctma.ui.theme.MiFormacionCTMATheme
+import com.example.miformacionctma.uii.components.TarjetaActividad
+
 
 @Composable
 fun PantallaActividades(
     actividades: List<ActividadFormativa> = actividadesEjemplo
 ) {
+
+    // Lista que puede cambiar mientras usamos la aplicación
+    val actividadesActuales = remember {
+        mutableStateListOf(*actividades.toTypedArray())
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -37,7 +47,7 @@ fun PantallaActividades(
         }
     ) { paddingValues ->
 
-        if (actividades.isEmpty()) {
+        if (actividadesActuales.isEmpty()) {
 
             EstadoVacio(
                 modifier = Modifier
@@ -56,11 +66,13 @@ fun PantallaActividades(
             ) {
 
                 item {
+
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 16.dp)
                     ) {
+
                         Text(
                             text = "Actividades formativas",
                             style = MaterialTheme.typography.headlineSmall
@@ -74,12 +86,31 @@ fun PantallaActividades(
                 }
 
                 items(
-                    items = actividades,
+                    items = actividadesActuales,
                     key = { actividad -> actividad.id }
                 ) { actividad ->
 
                     TarjetaActividad(
-                        actividad = actividad
+                        actividad = actividad,
+
+                        onCompletar = {
+
+                            // Buscar la posición de la actividad
+                            val posicion =
+                                actividadesActuales.indexOfFirst {
+                                    it.id == actividad.id
+                                }
+
+                            // Si la actividad existe, actualizarla
+                            if (posicion != -1) {
+
+                                actividadesActuales[posicion] =
+                                    actividad.copy(
+                                        estado = "Completada",
+                                        progreso = 100
+                                    )
+                            }
+                        }
                     )
                 }
             }
@@ -87,14 +118,17 @@ fun PantallaActividades(
     }
 }
 
+
 @Composable
 fun EstadoVacio(
     modifier: Modifier = Modifier
 ) {
+
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center
     ) {
+
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -113,11 +147,13 @@ fun EstadoVacio(
                 onClick = {},
                 modifier = Modifier.padding(top = 16.dp)
             ) {
+
                 Text("Actualizar")
             }
         }
     }
 }
+
 
 val actividadesEjemplo = listOf(
 
@@ -212,21 +248,27 @@ val actividadesEjemplo = listOf(
     )
 )
 
+
 @Preview(
     showBackground = true,
     showSystemUi = true
 )
 @Composable
 fun PantallaActividadesPreview() {
+
     MiFormacionCTMATheme {
+
         PantallaActividades()
     }
 }
 
+
 @Preview(showBackground = true)
 @Composable
 fun EstadoVacioPreview() {
+
     MiFormacionCTMATheme {
+
         EstadoVacio(
             modifier = Modifier.fillMaxSize()
         )
