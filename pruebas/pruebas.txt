@@ -1,0 +1,5 @@
+Prueba 1: Verificar la navegación a la pantalla de actividades.
+Descripción: Al iniciar la aplicación y navegar al menú de formación, se debe mostrar la lista de actividades sin errores.
+
+Prueba 2: Comprobar la carga de datos en PantallaActividades.
+Descripción: Validar que los elementos de la lista se rendericen correctamente y que el scroll sea fluido.
