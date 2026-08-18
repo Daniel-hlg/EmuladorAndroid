@@ -2,13 +2,20 @@
 
 package com.example.miformacionctma.uii.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -20,8 +27,10 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.miformacionctma.R
 import com.example.miformacionctma.model.ActividadFormativa
 import com.example.miformacionctma.ui.theme.MiFormacionCTMATheme
 import com.example.miformacionctma.uii.components.TarjetaActividad
@@ -32,7 +41,7 @@ fun PantallaActividades(
     actividades: List<ActividadFormativa> = actividadesEjemplo
 ) {
 
-    // Lista que puede cambiar mientras usamos la aplicación
+    // Lista local que permite modificar el estado de las actividades
     val actividadesActuales = remember {
         mutableStateListOf(*actividades.toTypedArray())
     }
@@ -57,61 +66,148 @@ fun PantallaActividades(
 
         } else {
 
-            LazyColumn(
+            BoxWithConstraints(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
-                    .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
 
-                item {
+                // 600 dp será nuestro punto para cambiar
+                // de lista a cuadrícula.
+                val esPantallaAmplia = maxWidth >= 600.dp
+
+                if (esPantallaAmplia) {
+
+                    // ==============================
+                    // GRID PARA PANTALLAS AMPLIAS
+                    // ==============================
 
                     Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 16.dp)
+                        modifier = Modifier.fillMaxSize()
                     ) {
 
-                        Text(
-                            text = "Actividades formativas",
-                            style = MaterialTheme.typography.headlineSmall
-                        )
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                    start = 16.dp,
+                                    end = 16.dp,
+                                    top = 16.dp,
+                                    bottom = 8.dp
+                                )
+                        ) {
 
-                        Text(
-                            text = "Consulta tus actividades, fechas, estados y progreso.",
-                            modifier = Modifier.padding(top = 8.dp)
-                        )
-                    }
-                }
+                            Text(
+                                text = "Actividades formativas",
+                                style = MaterialTheme.typography.headlineSmall
+                            )
 
-                items(
-                    items = actividadesActuales,
-                    key = { actividad -> actividad.id }
-                ) { actividad ->
+                            Text(
+                                text = "Consulta tus actividades, fechas, estados y progreso.",
+                                modifier = Modifier.padding(top = 8.dp)
+                            )
+                        }
 
-                    TarjetaActividad(
-                        actividad = actividad,
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(2),
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = androidx.compose.foundation.layout.PaddingValues(
+                                horizontal = 16.dp,
+                                vertical = 8.dp
+                            ),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
 
-                        onCompletar = {
+                            items(
+                                items = actividadesActuales,
+                                key = { actividad -> actividad.id }
+                            ) { actividad ->
 
-                            // Buscar la posición de la actividad
-                            val posicion =
-                                actividadesActuales.indexOfFirst {
-                                    it.id == actividad.id
-                                }
+                                TarjetaActividad(
+                                    actividad = actividad,
+                                    onCompletar = {
 
-                            // Si la actividad existe, actualizarla
-                            if (posicion != -1) {
+                                        val posicion =
+                                            actividadesActuales.indexOfFirst {
+                                                it.id == actividad.id
+                                            }
 
-                                actividadesActuales[posicion] =
-                                    actividad.copy(
-                                        estado = "Completada",
-                                        progreso = 100
-                                    )
+                                        if (posicion != -1) {
+
+                                            actividadesActuales[posicion] =
+                                                actividad.copy(
+                                                    estado = "Completada",
+                                                    progreso = 100
+                                                )
+                                        }
+                                    }
+                                )
                             }
                         }
-                    )
+                    }
+
+                } else {
+
+                    // ==============================
+                    // LISTA PARA PANTALLAS PEQUEÑAS
+                    // ==============================
+
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = androidx.compose.foundation.layout.PaddingValues(
+                            start = 16.dp,
+                            end = 16.dp,
+                            top = 16.dp,
+                            bottom = 16.dp
+                        ),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+
+                        item {
+
+                            Column(
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+
+                                Text(
+                                    text = "Actividades formativas",
+                                    style = MaterialTheme.typography.headlineSmall
+                                )
+
+                                Text(
+                                    text = "Consulta tus actividades, fechas, estados y progreso.",
+                                    modifier = Modifier.padding(top = 8.dp)
+                                )
+                            }
+                        }
+
+                        items(
+                            items = actividadesActuales,
+                            key = { actividad -> actividad.id }
+                        ) { actividad ->
+
+                            TarjetaActividad(
+                                actividad = actividad,
+                                onCompletar = {
+
+                                    val posicion =
+                                        actividadesActuales.indexOfFirst {
+                                            it.id == actividad.id
+                                        }
+
+                                    if (posicion != -1) {
+
+                                        actividadesActuales[posicion] =
+                                            actividad.copy(
+                                                estado = "Completada",
+                                                progreso = 100
+                                            )
+                                    }
+                                }
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -132,6 +228,20 @@ fun EstadoVacio(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
+            Image(
+                painter = painterResource(
+                    id = R.drawable.imagen_estudio
+                ),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 32.dp)
+            )
+
+            Spacer(
+                modifier = Modifier.height(16.dp)
+            )
 
             Text(
                 text = "No hay actividades",
@@ -257,13 +367,14 @@ val actividadesEjemplo = listOf(
 fun PantallaActividadesPreview() {
 
     MiFormacionCTMATheme {
-
         PantallaActividades()
     }
 }
 
 
-@Preview(showBackground = true)
+@Preview(
+    showBackground = true
+)
 @Composable
 fun EstadoVacioPreview() {
 
@@ -272,5 +383,19 @@ fun EstadoVacioPreview() {
         EstadoVacio(
             modifier = Modifier.fillMaxSize()
         )
+    }
+}
+
+@Preview(
+    showBackground = true,
+    widthDp = 700,
+    heightDp = 500,
+    name = "Ancho ampliado"
+)
+
+@Composable
+fun PantallaActividadesAnchoAmpliadoPreview() {
+    MiFormacionCTMATheme {
+        PantallaActividades()
     }
 }
