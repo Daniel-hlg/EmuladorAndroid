@@ -113,7 +113,9 @@ fun ContenidoAdaptable(
         } else {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.padding(top = 16.dp)
             ) {
                 items(actividades, key = { it.id }) { actividad ->
                     TarjetaActividad(actividad = actividad)
