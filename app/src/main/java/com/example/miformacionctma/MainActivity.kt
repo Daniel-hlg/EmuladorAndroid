@@ -34,20 +34,27 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.miformacionctma.ui.theme.MiFormacionCTMATheme
 
+import com.example.miformacionctma.repository.InMemoryReporteRepository
+import com.example.miformacionctma.viewmodel.CrearReporteViewModel
+import com.example.miformacionctma.uii.screens.CrearRoute
 
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val repository = InMemoryReporteRepository()
+        val viewModel = CrearReporteViewModel(repository)
+
         setContent {
-            MiFormacionCTMATheme {
-                PantallaActividades()
-            }
+            CrearRoute(
+                viewModel = viewModel,
+                onGuardado = { id: String ->
+                    println("Reporte guardado con id: $id")
+                }
+            )
         }
     }
 }
-
 
 // Modelo de una actividad formativa
 data class ActividadFormativa(
