@@ -4,6 +4,7 @@ package com.example.miformacionctma.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +13,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilterChip
@@ -29,8 +33,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.miformacionctma.model.ActividadFormativa
-import com.example.miformacionctma.uii.components.TarjetaActividad
 import com.example.miformacionctma.ui.theme.MiFormacionCTMATheme
+import com.example.miformacionctma.uii.components.TarjetaActividad
+
 
 @Composable
 fun PantallaActividades(
@@ -61,6 +66,7 @@ fun PantallaActividades(
     Scaffold(
 
         topBar = {
+
             TopAppBar(
                 title = {
                     Text("Mi Formación CTMA")
@@ -70,177 +76,55 @@ fun PantallaActividades(
 
     ) { paddingValues ->
 
-        if (actividades.isEmpty()) {
+        BoxWithConstraints(
 
-            EstadoVacio(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-            )
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
 
-        } else {
+            // Guardamos el ancho disponible para decidir
+            // qué tipo de diseño mostrar.
+            val anchoDisponible = maxWidth
 
-            LazyColumn(
-
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(horizontal = 16.dp),
-
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-
+            Column(
+                modifier = Modifier.fillMaxSize()
             ) {
 
-                // Encabezado y filtros
-                item {
+                EncabezadoYFiltros(
+                    filtroSeleccionado = filtroSeleccionado,
+                    onFiltroSeleccionado = {
+                        filtroSeleccionado = it
+                    },
+                    cantidadActividades = actividadesFiltradas.size
+                )
 
-                    Column(
+                if (actividades.isEmpty()) {
+
+                    EstadoVacio(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 16.dp)
-                    ) {
-
-                        Text(
-                            text = "Actividades formativas",
-                            style = MaterialTheme.typography.headlineSmall
-                        )
-
-                        Spacer(
-                            modifier = Modifier.height(8.dp)
-                        )
-
-                        Text(
-                            text = "Consulta tus actividades, fechas, estados y progreso."
-                        )
-
-                        Spacer(
-                            modifier = Modifier.height(16.dp)
-                        )
-
-                        Text(
-                            text = "Filtrar por estado:",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-
-                        Spacer(
-                            modifier = Modifier.height(8.dp)
-                        )
-
-                        // Primera fila de filtros
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-
-                            FilterChip(
-
-                                selected = filtroSeleccionado == "Todas",
-
-                                onClick = {
-                                    filtroSeleccionado = "Todas"
-                                },
-
-                                label = {
-                                    Text("Todas")
-                                }
-                            )
-
-                            FilterChip(
-
-                                selected = filtroSeleccionado == "Completadas",
-
-                                onClick = {
-                                    filtroSeleccionado = "Completadas"
-                                },
-
-                                label = {
-                                    Text("Completadas")
-                                }
-                            )
-                        }
-
-                        Spacer(
-                            modifier = Modifier.height(8.dp)
-                        )
-
-                        // Segunda fila de filtros
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-
-                            FilterChip(
-
-                                selected = filtroSeleccionado == "En proceso",
-
-                                onClick = {
-                                    filtroSeleccionado = "En proceso"
-                                },
-
-                                label = {
-                                    Text("En proceso")
-                                }
-                            )
-
-                            FilterChip(
-
-                                selected = filtroSeleccionado == "Pendientes",
-
-                                onClick = {
-                                    filtroSeleccionado = "Pendientes"
-                                },
-
-                                label = {
-                                    Text("Pendientes")
-                                }
-                            )
-                        }
-
-                        Spacer(
-                            modifier = Modifier.height(8.dp)
-                        )
-
-                        Text(
-                            text = "Mostrando ${actividadesFiltradas.size} actividad(es)",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-                }
-
-                // Lista filtrada de actividades
-                items(
-
-                    items = actividadesFiltradas,
-
-                    key = { actividad ->
-                        actividad.id
-                    }
-
-                ) { actividad ->
-
-                    TarjetaActividad(
-                        actividad = actividad
+                            .fillMaxSize()
                     )
-                }
 
-                // Mensaje cuando el filtro no encuentra resultados
-                if (actividadesFiltradas.isEmpty()) {
+                } else {
 
-                    item {
+                    if (anchoDisponible < 600.dp) {
 
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 40.dp),
+                        // Pantalla compacta:
+                        // mostramos una lista vertical.
+                        ListaActividades(
+                            actividades = actividadesFiltradas,
+                            modifier = Modifier.weight(1f)
+                        )
 
-                            contentAlignment = Alignment.Center
-                        ) {
+                    } else {
 
-                            Text(
-                                text = "No hay actividades con este estado.",
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        }
+                        // Pantalla amplia:
+                        // mostramos dos columnas.
+                        CuadriculaActividades(
+                            actividades = actividadesFiltradas,
+                            modifier = Modifier.weight(1f)
+                        )
                     }
                 }
             }
@@ -249,6 +133,253 @@ fun PantallaActividades(
 }
 
 
+/**
+ * Encabezado y filtros de actividades.
+ */
+@Composable
+fun EncabezadoYFiltros(
+    filtroSeleccionado: String,
+    onFiltroSeleccionado: (String) -> Unit,
+    cantidadActividades: Int
+) {
+
+    Column(
+
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+
+        Text(
+            text = "Actividades formativas",
+            style = MaterialTheme.typography.headlineSmall
+        )
+
+        Spacer(
+            modifier = Modifier.height(8.dp)
+        )
+
+        Text(
+            text = "Consulta tus actividades, fechas, estados y progreso."
+        )
+
+        Spacer(
+            modifier = Modifier.height(16.dp)
+        )
+
+        Text(
+            text = "Filtrar por estado:",
+            style = MaterialTheme.typography.titleMedium
+        )
+
+        Spacer(
+            modifier = Modifier.height(8.dp)
+        )
+
+        Row(
+
+            modifier = Modifier.fillMaxWidth(),
+
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+
+            FilterChip(
+
+                selected = filtroSeleccionado == "Todas",
+
+                onClick = {
+                    onFiltroSeleccionado("Todas")
+                },
+
+                label = {
+                    Text("Todas")
+                }
+            )
+
+            FilterChip(
+
+                selected = filtroSeleccionado == "Completadas",
+
+                onClick = {
+                    onFiltroSeleccionado("Completadas")
+                },
+
+                label = {
+                    Text("Completadas")
+                }
+            )
+        }
+
+        Spacer(
+            modifier = Modifier.height(8.dp)
+        )
+
+        Row(
+
+            modifier = Modifier.fillMaxWidth(),
+
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+
+            FilterChip(
+
+                selected = filtroSeleccionado == "En proceso",
+
+                onClick = {
+                    onFiltroSeleccionado("En proceso")
+                },
+
+                label = {
+                    Text("En proceso")
+                }
+            )
+
+            FilterChip(
+
+                selected = filtroSeleccionado == "Pendientes",
+
+                onClick = {
+                    onFiltroSeleccionado("Pendientes")
+                },
+
+                label = {
+                    Text("Pendientes")
+                }
+            )
+        }
+
+        Spacer(
+            modifier = Modifier.height(8.dp)
+        )
+
+        Text(
+            text = "Mostrando $cantidadActividades actividad(es)",
+            style = MaterialTheme.typography.bodyMedium
+        )
+    }
+}
+
+
+/**
+ * Lista vertical para pantallas pequeñas.
+ */
+@Composable
+fun ListaActividades(
+    actividades: List<ActividadFormativa>,
+    modifier: Modifier = Modifier
+) {
+
+    if (actividades.isEmpty()) {
+
+        SinResultados(
+            modifier = modifier
+        )
+
+    } else {
+
+        LazyColumn(
+
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+
+            items(
+
+                items = actividades,
+
+                key = { actividad ->
+                    actividad.id
+                }
+
+            ) { actividad ->
+
+                TarjetaActividad(
+                    actividad = actividad
+                )
+            }
+        }
+    }
+}
+
+
+/**
+ * Cuadrícula de dos columnas para pantallas amplias.
+ */
+@Composable
+fun CuadriculaActividades(
+    actividades: List<ActividadFormativa>,
+    modifier: Modifier = Modifier
+) {
+
+    if (actividades.isEmpty()) {
+
+        SinResultados(
+            modifier = modifier
+        )
+
+    } else {
+
+        LazyVerticalGrid(
+
+            columns = GridCells.Fixed(2),
+
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+
+            items(
+
+                items = actividades,
+
+                key = { actividad ->
+                    actividad.id
+                }
+
+            ) { actividad ->
+
+                TarjetaActividad(
+                    actividad = actividad
+                )
+            }
+        }
+    }
+}
+
+
+/**
+ * Se muestra cuando el filtro no encuentra actividades.
+ */
+@Composable
+fun SinResultados(
+    modifier: Modifier = Modifier
+) {
+
+    Box(
+
+        modifier = modifier.fillMaxSize(),
+
+        contentAlignment = Alignment.Center
+    ) {
+
+        Text(
+            text = "No hay actividades con este estado.",
+            style = MaterialTheme.typography.bodyLarge
+        )
+    }
+}
+
+
+/**
+ * Se muestra cuando la lista general está vacía.
+ */
 @Composable
 fun EstadoVacio(
     modifier: Modifier = Modifier
@@ -259,13 +390,11 @@ fun EstadoVacio(
         modifier = modifier,
 
         contentAlignment = Alignment.Center
-
     ) {
 
         Column(
 
             horizontalAlignment = Alignment.CenterHorizontally
-
         ) {
 
             Text(
@@ -286,7 +415,6 @@ fun EstadoVacio(
                 onClick = {},
 
                 modifier = Modifier.padding(top = 16.dp)
-
             ) {
 
                 Text("Actualizar")
@@ -296,7 +424,9 @@ fun EstadoVacio(
 }
 
 
-// Actividades de ejemplo
+/**
+ * Datos de ejemplo.
+ */
 val actividadesEjemplo = listOf(
 
     ActividadFormativa(
@@ -391,7 +521,9 @@ val actividadesEjemplo = listOf(
 )
 
 
-// Preview de la pantalla principal
+/**
+ * Preview normal.
+ */
 @Preview(
     showBackground = true,
     showSystemUi = true
@@ -406,8 +538,34 @@ fun PantallaActividadesPreview() {
 }
 
 
-// Preview del estado vacío
-@Preview(showBackground = true)
+/**
+ * Preview de pantalla amplia.
+ *
+ * Al superar 600dp se activa
+ * la cuadrícula de dos columnas.
+ */
+@Preview(
+    showBackground = true,
+    showSystemUi = true,
+    widthDp = 1000,
+    heightDp = 700
+)
+@Composable
+fun PantallaActividadesAnchaPreview() {
+
+    MiFormacionCTMATheme {
+
+        PantallaActividades()
+    }
+}
+
+
+/**
+ * Preview del estado vacío.
+ */
+@Preview(
+    showBackground = true
+)
 @Composable
 fun EstadoVacioPreview() {
 
