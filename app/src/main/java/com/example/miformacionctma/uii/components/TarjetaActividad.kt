@@ -1,5 +1,6 @@
 package com.example.miformacionctma.uii.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,17 +28,22 @@ import com.example.miformacionctma.ui.theme.MiFormacionCTMATheme
 @Composable
 fun TarjetaActividad(
     actividad: ActividadFormativa,
-    onCompletar: () -> Unit
+    onCompletar: () -> Unit,
+    onActividadClick: (Int) -> Unit = {}
 ) {
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable {
+                onActividadClick(actividad.id)
+            }
             .semantics {
                 contentDescription =
                     "Actividad ${actividad.titulo}, " +
                             "estado ${actividad.estado}, " +
-                            "progreso ${actividad.progreso} por ciento"
+                            "progreso ${actividad.progreso} por ciento. " +
+                            "Toca para ver el detalle."
             }
     ) {
 

@@ -38,7 +38,8 @@ import com.example.miformacionctma.uii.components.TarjetaActividad
 
 @Composable
 fun PantallaActividades(
-    actividades: List<ActividadFormativa> = actividadesEjemplo
+    actividades: List<ActividadFormativa> = actividadesEjemplo,
+    onActividadClick: (Int) -> Unit = {}
 ) {
 
     // Lista local que permite modificar el estado de las actividades
@@ -141,7 +142,8 @@ fun PantallaActividades(
                                                     progreso = 100
                                                 )
                                         }
-                                    }
+                                    },
+                                    onActividadClick = onActividadClick
                                 )
                             }
                         }
@@ -204,7 +206,8 @@ fun PantallaActividades(
                                                 progreso = 100
                                             )
                                     }
-                                }
+                                },
+                                onActividadClick = onActividadClick
                             )
                         }
                     }
@@ -386,15 +389,16 @@ fun EstadoVacioPreview() {
     }
 }
 
+
 @Preview(
     showBackground = true,
     widthDp = 700,
     heightDp = 500,
     name = "Ancho ampliado"
 )
-
 @Composable
 fun PantallaActividadesAnchoAmpliadoPreview() {
+
     MiFormacionCTMATheme {
         PantallaActividades()
     }
