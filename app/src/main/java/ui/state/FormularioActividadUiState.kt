@@ -1,11 +1,11 @@
 package com.example.miformacionctma.ui.state
 
 data class FormularioActividadUiState(
+    val id: String = "",
     val titulo: String = "",
     val descripcion: String = "",
     val fecha: String = "",
-    val prioridad: Int = 0,
-    val progreso: Int = 0,
-    val errores: Map<String, String> = emptyMap(),
-    val puedeGuardar: Boolean = false
+    val estado: String = "Pendiente",
+    val progreso: Float = 0.0f,
+    val errores: Map<String, String> = emptyMap()
 )

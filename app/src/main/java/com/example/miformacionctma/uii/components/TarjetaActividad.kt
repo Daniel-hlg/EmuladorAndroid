@@ -24,14 +24,12 @@ import androidx.compose.ui.unit.dp
 import com.example.miformacionctma.model.ActividadFormativa
 import com.example.miformacionctma.ui.theme.MiFormacionCTMATheme
 
-
 @Composable
 fun TarjetaActividad(
     actividad: ActividadFormativa,
     onCompletar: () -> Unit,
     onActividadClick: (Int) -> Unit = {}
 ) {
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -46,43 +44,31 @@ fun TarjetaActividad(
                             "Toca para ver el detalle."
             }
     ) {
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-
             // TÍTULO
-
             Text(
                 text = actividad.titulo,
                 style = MaterialTheme.typography.titleLarge
             )
 
-            Spacer(
-                modifier = Modifier.height(8.dp)
-            )
-
+            Spacer(modifier = Modifier.height(8.dp))
 
             // DESCRIPCIÓN
-
             Text(
                 text = actividad.descripcion,
                 style = MaterialTheme.typography.bodyMedium
             )
 
-            Spacer(
-                modifier = Modifier.height(12.dp)
-            )
-
+            Spacer(modifier = Modifier.height(12.dp))
 
             // FECHA + ESTADO
-
             Row(
                 modifier = Modifier.fillMaxWidth()
             ) {
-
                 Text(
                     text = "Fecha: ${actividad.fecha}",
                     modifier = Modifier.weight(1f)
@@ -94,35 +80,23 @@ fun TarjetaActividad(
                 )
             }
 
-            Spacer(
-                modifier = Modifier.height(12.dp)
-            )
-
+            Spacer(modifier = Modifier.height(12.dp))
 
             // PROGRESO
-
             Text(
                 text = "Progreso: ${actividad.progreso}%"
             )
 
-            Spacer(
-                modifier = Modifier.height(6.dp)
-            )
+            Spacer(modifier = Modifier.height(6.dp))
 
             LinearProgressIndicator(
-                progress = {
-                    actividad.progreso / 100f
-                },
+                progress = { actividad.progreso / 100f },
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(
-                modifier = Modifier.height(12.dp)
-            )
-
+            Spacer(modifier = Modifier.height(12.dp))
 
             // BOTÓN COMPLETAR
-
             Button(
                 onClick = onCompletar,
                 enabled = actividad.estado != "Completada",
@@ -137,7 +111,6 @@ fun TarjetaActividad(
                             }
                     }
             ) {
-
                 Text(
                     text = if (actividad.estado == "Completada") {
                         "Actividad completada"
@@ -150,21 +123,14 @@ fun TarjetaActividad(
     }
 }
 
-
 /* =========================================================
-   PREVIEW 1
-   Actividad completada
+   PREVIEWS
    ========================================================= */
 
-@Preview(
-    showBackground = true,
-    name = "Actividad completada"
-)
+@Preview(showBackground = true, name = "Actividad completada")
 @Composable
 fun TarjetaActividadCompletadaPreview() {
-
     MiFormacionCTMATheme {
-
         TarjetaActividad(
             actividad = ActividadFormativa(
                 id = 1,
@@ -179,21 +145,10 @@ fun TarjetaActividadCompletadaPreview() {
     }
 }
 
-
-/* =========================================================
-   PREVIEW 2
-   Actividad en proceso
-   ========================================================= */
-
-@Preview(
-    showBackground = true,
-    name = "Actividad en proceso"
-)
+@Preview(showBackground = true, name = "Actividad en proceso")
 @Composable
 fun TarjetaActividadEnProcesoPreview() {
-
     MiFormacionCTMATheme {
-
         TarjetaActividad(
             actividad = ActividadFormativa(
                 id = 2,
@@ -208,21 +163,10 @@ fun TarjetaActividadEnProcesoPreview() {
     }
 }
 
-
-/* =========================================================
-   PREVIEW 3
-   Título largo
-   ========================================================= */
-
-@Preview(
-    showBackground = true,
-    name = "Título largo"
-)
+@Preview(showBackground = true, name = "Título largo")
 @Composable
 fun TarjetaActividadTituloLargoPreview() {
-
     MiFormacionCTMATheme {
-
         TarjetaActividad(
             actividad = ActividadFormativa(
                 id = 3,
@@ -237,30 +181,18 @@ fun TarjetaActividadTituloLargoPreview() {
     }
 }
 
-
-/* =========================================================
-   PREVIEW 4
-   Texto aumentado a 1.5
-   ========================================================= */
-
-@Preview(
-    showBackground = true,
-    name = "Texto grande 1.5"
-)
+@Preview(showBackground = true, name = "Texto grande 1.5")
 @Composable
 fun TarjetaActividadTextoGrandePreview() {
-
     val densidad = LocalDensity.current
 
     MiFormacionCTMATheme {
-
         CompositionLocalProvider(
             LocalDensity provides Density(
                 density = densidad.density,
                 fontScale = 1.5f
             )
         ) {
-
             TarjetaActividad(
                 actividad = ActividadFormativa(
                     id = 4,
