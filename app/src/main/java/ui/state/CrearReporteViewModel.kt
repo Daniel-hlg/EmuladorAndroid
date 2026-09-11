@@ -8,66 +8,107 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.miformacionctma.MiFormacionApplication
 import com.example.miformacionctma.model.Reporte
 import com.example.miformacionctma.model.ReporteRepository
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class CrearReporteViewModel(
-    private val reporteRepository: ReporteRepository
+    private val repository: ReporteRepository
 ) : ViewModel() {
 
-    val listaActividadesState: StateFlow<List<FormularioActividadUiState>> = reporteRepository.reportes
-        .map { lista ->
-            lista.map { reporte ->
+    private val _operacionState = MutableStateFlow<OperacionUiState>(OperacionUiState.Inactiva)
+    val operacionState: StateFlow<OperacionUiState> = _operacionState.asStateFlow()
+
+    private val _textoBusqueda = MutableStateFlow("")
+    val textoBusqueda: StateFlow<String> = _textoBusqueda.asStateFlow()
+
+    // Combina la propiedad 'repository.reportes' con el texto de búsqueda
+    val listadoUiState: StateFlow<ListadoUiState> = combine(
+        repository.reportes,
+        _textoBusqueda
+    ) { listaReportes, busqueda ->
+        val listaFiltrada = if (busqueda.isBlank()) {
+            listaReportes
+        } else {
+            listaReportes.filter { reporte ->
+                reporte.titulo.contains(busqueda, ignoreCase = true)
+            }
+        }
+
+        if (listaFiltrada.isEmpty()) {
+            ListadoUiState.Vacio
+        } else {
+            val listaUi = listaFiltrada.map { reporte ->
                 FormularioActividadUiState(
                     id = reporte.id,
                     titulo = reporte.titulo,
+                    descripcion = "",
                     fecha = reporte.fecha,
                     estado = if (reporte.completado) "Completada" else "Pendiente",
-                    progreso = if (reporte.completado) 1.0f else 0.0f
+                    progreso = if (reporte.completado) 100.0f else 0.0f
                 )
             }
+            ListadoUiState.Contenido(listaUi)
+        }
+    }
+        .catch { e ->
+            emit(ListadoUiState.Error(e.message ?: "Error al cargar los datos"))
         }
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList()
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = ListadoUiState.Cargando
         )
 
-    fun guardarReporte(titulo: String, fecha: String) {
-        if (titulo.isBlank()) return
+    fun actualizarBusqueda(query: String) {
+        _textoBusqueda.value = query
+    }
+
+    fun guardarReporte(titulo: String, fecha: String, descripcion: String = "") {
         viewModelScope.launch {
-            val nuevoReporte = Reporte(
-                id = "0",
-                titulo = titulo,
-                fecha = if (fecha.isBlank()) "Fecha no especificada" else fecha,
-                completado = false,
-                resuelto = false
-            )
-            reporteRepository.agregar(nuevoReporte)
+            _operacionState.value = OperacionUiState.EnCurso
+            try {
+                val nuevoReporte = Reporte(
+                    id = "0",
+                    titulo = titulo,
+                    fecha = fecha,
+                    completado = false,
+                    resuelto = false
+                )
+                repository.agregar(nuevoReporte)
+                _operacionState.value = OperacionUiState.Exitosa
+            } catch (e: Exception) {
+                _operacionState.value = OperacionUiState.Fallida(e.message ?: "Error al guardar")
+            }
         }
     }
 
-    fun marcarComoCompletada(actividadUi: FormularioActividadUiState) {
+    // Nueva función para marcar como completada la actividad en Room
+    fun completarActividad(id: Int) {
         viewModelScope.launch {
-            val reporteActualizado = Reporte(
-                id = actividadUi.id,
-                titulo = actividadUi.titulo,
-                fecha = actividadUi.fecha,
-                completado = true,
-                resuelto = true
-            )
-            reporteRepository.actualizar(reporteActualizado)
+            val reporteActual = repository.reportes.value.find { it.id == id.toString() }
+            reporteActual?.let {
+                val reporteActualizado = it.copy(completado = true)
+                repository.actualizar(reporteActualizado)
+            }
         }
+    }
+
+    fun reiniciarEstadoOperacion() {
+        _operacionState.value = OperacionUiState.Inactiva
     }
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as MiFormacionApplication)
-                CrearReporteViewModel(application.container.reporteRepository)
+                val repository = application.container.reporteRepository
+                CrearReporteViewModel(repository = repository)
             }
         }
     }

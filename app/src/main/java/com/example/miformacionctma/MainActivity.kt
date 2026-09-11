@@ -9,9 +9,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.miformacionctma.ui.state.CrearReporteViewModel
-import com.example.miformacionctma.uii.screens.PantallaCrearActividad
 import com.example.miformacionctma.ui.theme.MiFormacionCTMATheme
 import com.example.miformacionctma.uii.screens.PantallaActividades
+import com.example.miformacionctma.uii.screens.PantallaCrearReporte
 
 class MainActivity : ComponentActivity() {
 
@@ -36,12 +36,9 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     "crear" -> {
-                        PantallaCrearActividad(
-                            onGuardarActividad = { nuevoUiState ->
-                                crearReporteViewModel.guardarReporte(
-                                    titulo = nuevoUiState.titulo,
-                                    fecha = nuevoUiState.fecha
-                                )
+                        PantallaCrearReporte(
+                            viewModel = crearReporteViewModel,
+                            onReporteGuardado = {
                                 pantallaActual = "lista"
                             }
                         )
