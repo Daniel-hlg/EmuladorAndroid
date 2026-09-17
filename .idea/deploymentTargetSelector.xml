@@ -6,15 +6,15 @@
         <option name="selectionMode" value="DROPDOWN" />
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="EstadoVacioPreview">
+      <SelectionState runConfigName="eliminarReportePorId()">
         <option name="selectionMode" value="DROPDOWN" />
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="TarjetaActividadTextoGrandePreview">
+      <SelectionState runConfigName="Tests in 'com.example.miformacionctma'">
         <option name="selectionMode" value="DROPDOWN" />
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="TarjetaActividadTituloLargoPreview">
+      <SelectionState runConfigName="PantallaActividadesTest">
         <option name="selectionMode" value="DROPDOWN" />
         <DialogSelection />
       </SelectionState>

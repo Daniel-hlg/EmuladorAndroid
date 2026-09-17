@@ -57,4 +57,24 @@ class ReporteDaoTest {
         assertEquals("Reporte de prueba UI", listaReportes[0].titulo)
         assertTrue(listaReportes[0].resuelto)
     }
+
+    @Test
+    fun eliminarReportePorId() = runBlocking {
+        // Arrange
+        val reporte = ReporteEntity(
+            id = 2,
+            titulo = "Reporte a eliminar",
+            fecha = "15 de septiembre",
+            completado = false,
+            resuelto = false
+        )
+        reporteDao.insert(reporte)
+
+        // Act
+        reporteDao.eliminarPorId(2)
+
+        // Assert
+        val listaReportes = reporteDao.obtenerTodos().first()
+        assertTrue("La lista debería estar vacía tras eliminar", listaReportes.isEmpty())
+    }
 }

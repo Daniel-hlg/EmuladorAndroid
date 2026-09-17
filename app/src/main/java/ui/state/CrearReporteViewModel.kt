@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.miformacionctma.MiFormacionApplication
+import com.example.miformacionctma.data.repository.RoomReporteRepository
 import com.example.miformacionctma.model.Reporte
 import com.example.miformacionctma.model.ReporteRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -69,6 +70,27 @@ class CrearReporteViewModel(
         _textoBusqueda.value = query
     }
 
+    // Sincronización remota para la Semana 8 (Offline-First)
+    fun sincronizarConServidor() {
+        viewModelScope.launch {
+            _operacionState.value = OperacionUiState.EnCurso
+            val roomRepo = repository as? RoomReporteRepository
+            if (roomRepo != null) {
+                val resultado = roomRepo.refresh()
+                resultado.fold(
+                    onSuccess = {
+                        _operacionState.value = OperacionUiState.Exitosa
+                    },
+                    onFailure = { error ->
+                        _operacionState.value = OperacionUiState.Fallida(error.message ?: "Error al sincronizar")
+                    }
+                )
+            } else {
+                _operacionState.value = OperacionUiState.Fallida("Repositorio no compatible con sincronización remota")
+            }
+        }
+    }
+
     fun guardarReporte(titulo: String, fecha: String, descripcion: String = "") {
         viewModelScope.launch {
             _operacionState.value = OperacionUiState.EnCurso
@@ -88,7 +110,6 @@ class CrearReporteViewModel(
         }
     }
 
-    // Nueva función para marcar como completada la actividad en Room
     fun completarActividad(id: Int) {
         viewModelScope.launch {
             val reporteActual = repository.reportes.value.find { it.id == id.toString() }

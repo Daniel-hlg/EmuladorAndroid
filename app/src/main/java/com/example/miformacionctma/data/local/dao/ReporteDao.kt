@@ -26,4 +26,7 @@ interface ReporteDao {
 
     @Query("SELECT * FROM reportes WHERE id = :id")
     fun obtenerPorId(id: Int): Flow<ReporteEntity?>
+
+    @Query("DELETE FROM reportes WHERE id = :id")
+    suspend fun eliminarPorId(id: Int)
 }
