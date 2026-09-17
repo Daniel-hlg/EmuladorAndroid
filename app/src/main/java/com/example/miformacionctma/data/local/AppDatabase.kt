@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.miformacionctma.data.local.dao.ReporteDao
 import com.example.miformacionctma.data.local.entity.ReporteEntity
@@ -11,7 +12,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@Database(entities = [ReporteEntity::class], version = 1, exportSchema = false)
+@Database(entities = [ReporteEntity::class], version = 2, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun reporteDao(): ReporteDao
@@ -20,6 +21,13 @@ abstract class AppDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
+        // Migración explícita de Versión 1 a Versión 2 (Añade columna fotoUri)
+        val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE reportes ADD COLUMN fotoUri TEXT DEFAULT NULL")
+            }
+        }
+
         fun getDatabase(context: Context, scope: CoroutineScope): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
@@ -27,7 +35,8 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "miformacion_database"
                 )
-                    .fallbackToDestructiveMigration() // Evita crasheos por cambios en versión de la BD
+                    .addMigrations(MIGRATION_1_2) // Aplica la migración explícita
+                    .fallbackToDestructiveMigration() // Respaldo de seguridad en caso de fallas
                     .addCallback(AppDatabaseCallback(scope))
                     .build()
                 INSTANCE = instance

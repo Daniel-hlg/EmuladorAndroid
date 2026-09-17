@@ -21,7 +21,8 @@ fun ReporteEntity.toDomain(): Reporte = Reporte(
     titulo = titulo,
     fecha = fecha,
     completado = completado,
-    resuelto = resuelto
+    resuelto = resuelto,
+    fotoUri = fotoUri // <- Mapeo de Entidad a Dominio
 )
 
 fun Reporte.toEntity(): ReporteEntity = ReporteEntity(
@@ -29,7 +30,8 @@ fun Reporte.toEntity(): ReporteEntity = ReporteEntity(
     titulo = titulo,
     fecha = fecha,
     completado = completado,
-    resuelto = resuelto
+    resuelto = resuelto,
+    fotoUri = fotoUri // <- Mapeo de Dominio a Entidad
 )
 
 class RoomReporteRepository(

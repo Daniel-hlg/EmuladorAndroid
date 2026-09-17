@@ -9,9 +9,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.miformacionctma.ui.state.CrearReporteViewModel
+import com.example.miformacionctma.ui.state.PantallaCrearReporte
 import com.example.miformacionctma.ui.theme.MiFormacionCTMATheme
 import com.example.miformacionctma.uii.screens.PantallaActividades
-import com.example.miformacionctma.uii.screens.PantallaCrearReporte
 
 class MainActivity : ComponentActivity() {
 
@@ -38,7 +38,10 @@ class MainActivity : ComponentActivity() {
                     "crear" -> {
                         PantallaCrearReporte(
                             viewModel = crearReporteViewModel,
-                            onReporteGuardado = {
+                            onReporteCreado = {
+                                pantallaActual = "lista"
+                            },
+                            onNavegarAtras = {
                                 pantallaActual = "lista"
                             }
                         )

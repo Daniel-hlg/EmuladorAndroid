@@ -117,4 +117,7 @@ dependencies {
     androidTestImplementation(libs.androidx.test.monitor)
 
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+
+    // Coil (Carga de imágenes en Compose)
+    implementation("io.coil-kt:coil-compose:2.6.0")
 }

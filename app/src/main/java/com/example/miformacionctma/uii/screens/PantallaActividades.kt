@@ -126,7 +126,8 @@ fun PantallaActividades(
                                 descripcion = uiState.descripcion,
                                 fecha = uiState.fecha,
                                 estado = uiState.estado,
-                                progreso = uiState.progreso.toInt()
+                                progreso = uiState.progreso.toInt(),
+                                fotoUri = uiState.fotoUri // <- Mapeo de evidencia fotográfica agregada
                             )
 
                             TarjetaActividad(

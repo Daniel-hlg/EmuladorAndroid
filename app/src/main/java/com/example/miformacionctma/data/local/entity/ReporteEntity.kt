@@ -12,7 +12,11 @@ data class ReporteEntity(
     val fecha: String,
     val completado: Boolean = false,
 
-    // Nueva columna agregada en la Versión 2
+    // Columna agregada en la Versión 2
     @ColumnInfo(name = "resuelto", defaultValue = "0")
-    val resuelto: Boolean = false
+    val resuelto: Boolean = false,
+
+    // Nueva columna para la evidencia multimedia (Versión 3)
+    @ColumnInfo(name = "fotoUri")
+    val fotoUri: String? = null
 )

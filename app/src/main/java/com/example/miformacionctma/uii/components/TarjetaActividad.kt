@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.LinearProgressIndicator
@@ -15,12 +16,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.example.miformacionctma.model.ActividadFormativa
 import com.example.miformacionctma.ui.theme.MiFormacionCTMATheme
 
@@ -49,6 +53,20 @@ fun TarjetaActividad(
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
+            // MOSTRAR EVIDENCIA MULTIMEDIA SI EXISTE
+            if (!actividad.fotoUri.isNullOrBlank()) {
+                AsyncImage(
+                    model = actividad.fotoUri,
+                    contentDescription = "Evidencia fotográfica",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(180.dp)
+                        .clip(RoundedCornerShape(8.dp)),
+                    contentScale = ContentScale.Crop
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+            }
+
             // TÍTULO
             Text(
                 text = actividad.titulo,

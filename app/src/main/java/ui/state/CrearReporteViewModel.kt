@@ -51,7 +51,8 @@ class CrearReporteViewModel(
                     descripcion = "",
                     fecha = reporte.fecha,
                     estado = if (reporte.completado) "Completada" else "Pendiente",
-                    progreso = if (reporte.completado) 100.0f else 0.0f
+                    progreso = if (reporte.completado) 100.0f else 0.0f,
+                    fotoUri = reporte.fotoUri // <- Mapeo de fotoUri a la UI
                 )
             }
             ListadoUiState.Contenido(listaUi)
@@ -91,7 +92,7 @@ class CrearReporteViewModel(
         }
     }
 
-    fun guardarReporte(titulo: String, fecha: String, descripcion: String = "") {
+    fun guardarReporte(titulo: String, fecha: String, descripcion: String = "", fotoUri: String? = null) {
         viewModelScope.launch {
             _operacionState.value = OperacionUiState.EnCurso
             try {
@@ -100,7 +101,8 @@ class CrearReporteViewModel(
                     titulo = titulo,
                     fecha = fecha,
                     completado = false,
-                    resuelto = false
+                    resuelto = false,
+                    fotoUri = fotoUri // <- Persistencia de la URI en Room
                 )
                 repository.agregar(nuevoReporte)
                 _operacionState.value = OperacionUiState.Exitosa

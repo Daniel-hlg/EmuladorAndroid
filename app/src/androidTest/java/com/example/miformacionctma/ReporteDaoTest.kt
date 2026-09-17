@@ -77,4 +77,28 @@ class ReporteDaoTest {
         val listaReportes = reporteDao.obtenerTodos().first()
         assertTrue("La lista debería estar vacía tras eliminar", listaReportes.isEmpty())
     }
+
+    @Test
+    @Throws(Exception::class)
+    fun insertarYObtenerReporteConFotoUri() = runBlocking {
+        // Arrange
+        val uriEsperada = "content://media/external/images/media/100"
+        val reporte = ReporteEntity(
+            id = 3,
+            titulo = "Reporte con Evidencia",
+            fecha = "17 de septiembre",
+            completado = false,
+            resuelto = false,
+            fotoUri = uriEsperada
+        )
+
+        // Act
+        reporteDao.insert(reporte)
+
+        // Assert
+        val listaReportes = reporteDao.obtenerTodos().first()
+        val reporteGuardado = listaReportes.first { it.id == 3 }
+
+        assertEquals(uriEsperada, reporteGuardado.fotoUri)
+    }
 }

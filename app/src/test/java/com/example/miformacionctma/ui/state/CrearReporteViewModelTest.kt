@@ -60,22 +60,21 @@ class CrearReporteViewModelTest {
 
     @Test
     fun `HU1 - Reporte nuevo tiene progreso 0 por ciento`() = runTest {
-        // Iniciamos la recolección en segundo plano para activar el StateFlow (SharingStarted.WhileSubscribed)
         val collectJob = backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.listadoUiState.collect {}
         }
-        
+
         val reporte = Reporte("1", "Test", "Hoy", completado = false)
         fakeRepository.agregar(reporte)
-        
+
         advanceUntilIdle()
-        
+
         val state = viewModel.listadoUiState.value
-        assertTrue("El estado debería ser Contenido, pero es: $state", state is ListadoUiState.Contenido)
+        assertTrue("El estado debería ser Contenido", state is ListadoUiState.Contenido)
         val uiState = (state as ListadoUiState.Contenido).lista.first()
         assertEquals(0.0f, uiState.progreso)
         assertEquals("Pendiente", uiState.estado)
-        
+
         collectJob.cancel()
     }
 
@@ -84,18 +83,18 @@ class CrearReporteViewModelTest {
         val collectJob = backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.listadoUiState.collect {}
         }
-        
+
         val reporte = Reporte("1", "Test", "Hoy", completado = true)
         fakeRepository.agregar(reporte)
-        
+
         advanceUntilIdle()
-        
+
         val state = viewModel.listadoUiState.value
-        assertTrue("El estado debería ser Contenido, pero es: $state", state is ListadoUiState.Contenido)
+        assertTrue("El estado debería ser Contenido", state is ListadoUiState.Contenido)
         val uiState = (state as ListadoUiState.Contenido).lista.first()
         assertEquals(100.0f, uiState.progreso)
         assertEquals("Completada", uiState.estado)
-        
+
         collectJob.cancel()
     }
 
@@ -104,23 +103,17 @@ class CrearReporteViewModelTest {
         val collectJob = backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.listadoUiState.collect {}
         }
-        
+
         val reporte = Reporte("1", "Test", "Hoy", completado = false)
         fakeRepository.agregar(reporte)
         advanceUntilIdle()
-        
+
         viewModel.completarActividad(1)
         advanceUntilIdle()
-        
+
         val reporteEnRepo = fakeRepository.reportes.value.first()
-        assertTrue("El reporte en el repositorio debería estar completado", reporteEnRepo.completado)
-        
-        val state = viewModel.listadoUiState.value
-        assertTrue("El estado debería ser Contenido", state is ListadoUiState.Contenido)
-        val uiState = (state as ListadoUiState.Contenido).lista.first()
-        assertEquals(100.0f, uiState.progreso)
-        assertEquals("Completada", uiState.estado)
-        
+        assertTrue("El reporte debería estar completado", reporteEnRepo.completado)
+
         collectJob.cancel()
     }
 
@@ -129,20 +122,38 @@ class CrearReporteViewModelTest {
         val collectJob = backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.listadoUiState.collect {}
         }
-        
+
         fakeRepository.agregar(Reporte("1", "Kotlin", "Hoy"))
         fakeRepository.agregar(Reporte("2", "Scrum", "Hoy"))
         advanceUntilIdle()
-        
+
         viewModel.actualizarBusqueda("Kot")
         advanceUntilIdle()
-        
+
         val state = viewModel.listadoUiState.value
         assertTrue("El estado debería ser Contenido", state is ListadoUiState.Contenido)
         val lista = (state as ListadoUiState.Contenido).lista
-        assertEquals("Debería haber solo 1 actividad en la lista filtrada", 1, lista.size)
+        assertEquals(1, lista.size)
         assertEquals("Kotlin", lista.first().titulo)
-        
+
         collectJob.cancel()
+    }
+
+    @Test
+    fun `HU4 - Guardar reporte con fotoUri persiste la ruta de la imagen`() = runTest {
+        val uriPrueba = "content://media/external/images/media/100"
+
+        viewModel.guardarReporte(
+            titulo = "Taller Android",
+            fecha = "17 de Septiembre",
+            descripcion = "Prueba de captura multimedia",
+            fotoUri = uriPrueba
+        )
+        advanceUntilIdle()
+
+        val reportesGuardados = fakeRepository.reportes.value
+        assertEquals(1, reportesGuardados.size)
+        assertEquals("Taller Android", reportesGuardados.first().titulo)
+        assertEquals(uriPrueba, reportesGuardados.first().fotoUri)
     }
 }

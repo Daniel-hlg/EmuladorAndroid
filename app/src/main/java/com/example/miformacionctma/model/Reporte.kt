@@ -5,5 +5,6 @@ data class Reporte(
     val titulo: String,
     val fecha: String,
     val completado: Boolean = false,
-    val resuelto: Boolean = false
+    val resuelto: Boolean = false,
+    val fotoUri: String? = null // <- Agregado para Semana 9
 )

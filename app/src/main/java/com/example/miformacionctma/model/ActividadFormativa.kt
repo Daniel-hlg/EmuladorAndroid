@@ -1,4 +1,3 @@
-
 package com.example.miformacionctma.model
 
 data class ActividadFormativa(
@@ -7,5 +6,6 @@ data class ActividadFormativa(
     val descripcion: String,
     val fecha: String,
     val estado: String,
-    val progreso: Int
+    val progreso: Int,
+    val fotoUri: String? = null // <- Campo para soportar evidencia multimedia
 )

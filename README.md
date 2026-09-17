@@ -215,22 +215,93 @@ En esta semana se integró la aplicación con servicios web RESTful mediante Ret
 * [x] **Pruebas de Integración (Room):** Operaciones CRUD sobre base de datos en memoria ejecutadas correctamente.
 * [x] **Microciclo TDD:** Funcionalidad de eliminación `eliminarPorId` desarrollada bajo el ciclo Red -> Green -> Refactor.
 
-## 🧪 Pruebas y Validación (Semana 8)
+# 🧪 Pruebas y Validación (Semana 8)
 
 Se implementó y ejecutó una suite de pruebas para garantizar el funcionamiento del patrón Repository y la interfaz gráfica de usuario.
 
-# 1. Pruebas Unitarias (`test`)
+## 1. Pruebas Unitarias (`test`)
 Validan la lógica de negocio y el manejo de datos en la capa de repositorio sin necesidad de levantar un emulador, utilizando el patrón **Fake**:
 
 * **`ActividadRepositoryTest`**: Confirma la adición y actualización de estados dentro de la fuente de datos mediante `FakeReporteRepository` y la emisión correcta de eventos a través de `StateFlow`.
 
-# 2. Pruebas Instrumentadas (`androidTest`)
+## 2. Pruebas Instrumentadas (`androidTest`)
 Ejecutadas en entorno con **Android 13 (API 33)** para validar la representación de componentes con Jetpack Compose:
 
 * **`PantallaActividadesTest`**: Verifica la renderización correcta de la cabecera principal, el catálogo de actividades y la presencia del campo de búsqueda/filtro.
 
-### 🛠️ Configuración del Entorno de Pruebas
+## 🛠️ Configuración del Entorno de Pruebas
 * **Target API:** Android 13 (API 33)
 * **Frameworks:** JUnit 4, Kotlin Coroutines Test, Compose Test Framework
 
-## Semana #9
+# 📱 MiFormacionCTMA - Evidencia Fotográfica y Persistencia (Semana 9)
+
+Módulo de gestión de actividades formativas para **MiFormacionCTMA**, enfocado en la integración de captura multimedia (cámara y galería), persistencia local en base de datos Room y renderizado optimizado de imágenes.
+
+---
+
+## 🚀 Funcionalidades Implementadas
+
+* **Captura y Selección de Evidencia Fotográfica:**
+  * Integración con la cámara del dispositivo utilizando `ActivityResultContracts.TakePicture`.
+  * Selección de imágenes desde el almacenamiento mediante `ActivityResultContracts.PickVisualMedia`.
+  * Generación segura de URIs temporales con `FileProvider`.
+
+* **Persistencia de Datos en Room (v2):**
+  * Migración de esquema en la entidad `ActividadFormativa` para almacenar `fotoUri` (String/Nullable).
+  * Concesión y manejo de permisos persistentes de lectura (`FLAG_GRANT_READ_URI_PERMISSION`) para imágenes seleccionadas desde la galería.
+
+* **Renderizado con Coil:**
+  * Muestra de vista previa en tiempo real en el formulario de creación.
+  * Renderizado asíncrono y eficiente mediante `AsyncImage` en la lista de actividades.
+
+* **Navegación y UX:**
+  * Barra de navegación superior (`TopAppBar`) con botón de retorno en la pantalla de registro.
+  * Manejo estricto de permisos en tiempo de ejecución (`Manifest.permission.CAMERA`).
+
+---
+
+## 🛠️ Tecnologías y Librerías
+
+* **Lenguaje:** Kotlin
+* **UI Framework:** Jetpack Compose (Material3)
+* **Base de Datos Local:** Room Database (v2)
+* **Carga de Imágenes:** Coil Compose (`io.coil-kt:coil-compose`)
+* **Manejo de Archivos:** `androidx.core.content.FileProvider`
+
+---
+
+# 📱 MiFormacionCTMA - Evidencia Fotográfica y Persistencia (Semana 9)
+
+Módulo de gestión de actividades formativas para **MiFormacionCTMA**, enfocado en la integración de captura multimedia (cámara y galería), persistencia local en base de datos Room y renderizado optimizado de imágenes.
+
+---
+
+## 🚀 Funcionalidades Implementadas
+
+* **Captura y Selección de Evidencia Fotográfica:**
+  * Integración con la cámara del dispositivo utilizando `ActivityResultContracts.TakePicture`.
+  * Selección de imágenes desde el almacenamiento mediante `ActivityResultContracts.PickVisualMedia`.
+  * Generación segura de URIs temporales con `FileProvider`.
+
+* **Persistencia de Datos en Room (v2):**
+  * Migración de esquema en la entidad `ActividadFormativa` para almacenar `fotoUri` (String/Nullable).
+  * Concesión y manejo de permisos persistentes de lectura (`FLAG_GRANT_READ_URI_PERMISSION`) para imágenes seleccionadas desde la galería.
+
+* **Renderizado con Coil:**
+  * Muestra de vista previa en tiempo real en el formulario de creación.
+  * Renderizado asíncrono y eficiente mediante `AsyncImage` en la lista de actividades.
+
+* **Navegación y UX:**
+  * Barra de navegación superior (`TopAppBar`) con botón de retorno en la pantalla de registro.
+  * Manejo estricto de permisos en tiempo de ejecución (`Manifest.permission.CAMERA`).
+
+---
+
+## 🛠️ Tecnologías y Librerías
+
+* **Lenguaje:** Kotlin
+* **UI Framework:** Jetpack Compose (Material3)
+* **Base de Datos Local:** Room Database (v2)
+* **Carga de Imágenes:** Coil Compose (`io.coil-kt:coil-compose`)
+* **Manejo de Archivos:** `androidx.core.content.FileProvider`
+
